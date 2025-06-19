@@ -3,7 +3,6 @@ import prettierPlugin from 'eslint-plugin-prettier';
 import prettierConfig from 'eslint-config-prettier';
 import globals from 'globals';
 import babelParser from '@babel/eslint-parser';
-
 export default [
     {
         files: ['**/*.js'],
