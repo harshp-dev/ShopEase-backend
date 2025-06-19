@@ -1,1 +1,1 @@
-# ShopEase-backend
+# SHOPEASE BACKEND
