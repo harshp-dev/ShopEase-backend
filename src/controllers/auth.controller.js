@@ -1,4 +1,3 @@
-
 import {
   forgotPasswordService,
   resetPasswordService,
@@ -7,7 +6,7 @@ import {
   logoutService,
   refreshTokenService,
   loginUser,
-  registerUser
+  registerUser,
 } from '../services/auth.service.js';
 
 export const login = async (req, res) => {
@@ -39,7 +38,8 @@ export const register = async (req, res) => {
     res.status(error.statusCode || 500).json({
       message: error.message || 'Server Error',
     });
-
+  }
+};
 export const forgotPasswordController = async (req, res) => {
   try {
     const { email } = req.body;
