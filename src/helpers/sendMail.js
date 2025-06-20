@@ -1,13 +1,12 @@
 import mailer from '../configs/mailer.config.js';
 import config from '../constants/config.js';
 
-const sendEmail = async ({ to, subject, text, html }) => {
+const sendEmail = async ({ to, subject, html }) => {
   try {
     const info = await mailer.sendMail({
       from: `"ShopeEase" <${config.EMAIL_USER}>`,
       to,
       subject,
-      text,
       html,
     });
     console.log('Email sent:', info.messageId);
