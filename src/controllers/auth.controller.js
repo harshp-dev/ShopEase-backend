@@ -40,6 +40,7 @@ export const register = async (req, res) => {
     });
   }
 };
+
 export const forgotPasswordController = async (req, res) => {
   try {
     const { email } = req.body;
