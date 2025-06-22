@@ -31,19 +31,9 @@ export const registrationSchema = Joi.object({
 });
 
 export const loginSchema = Joi.object({
-  email: Joi.string().email().trim(),
-
-  username: Joi.string().alphanum().min(3).max(30).trim(),
-
-  password: Joi.string().required().messages({
-    'any.required': 'Password is required',
-  }),
-})
-  .xor('email', 'username')
-  .messages({
-    'object.missing': 'Email or Username is required',
-    'object.xor': 'Only one of Email or Username should be provided',
-  });
+  username: Joi.string().trim().required(),
+  password: Joi.string().trim().required(),
+});
 export const activationSchema = Joi.object({
   token: Joi.string().required().messages({
     'any.required': 'Activation token is required',

@@ -12,7 +12,18 @@ import {
 export const login = async (req, res) => {
   try {
     const { username, password } = req.body;
-    await loginUser(username, password);
+    const { accessToken, refreshToken } = await loginUser(username, password);
+
+    res.cookie('accessToken', accessToken, {
+      sameSite: 'strict',
+      maxAge: 60 * 60 * 1000,
+    });
+
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
 
     res.status(200).json({
       message: 'Login successful',
@@ -95,8 +106,13 @@ export const refreshToken = async (req, res) => {
       return res.status(400).json({ message: 'Refresh token is required' });
     }
 
-    const { accessToken, newRefreshToken } = await refreshTokenService(refreshToken);
-    res.status(200).json({ accessToken, refreshToken: newRefreshToken });
+    const { accessToken } = await refreshTokenService(refreshToken);
+    res.cookie('accessToken', accessToken, {
+      sameSite: 'strict',
+      maxAge: 60 * 60 * 1000,
+    });
+
+    res.status(200).json({ message: 'Access token generated' });
   } catch (error) {
     res.status(500).json({ message: error.message || 'Something went wrong' });
   }
@@ -105,6 +121,7 @@ export const refreshToken = async (req, res) => {
 export const getMe = async (req, res, next) => {
   try {
     const userId = req.user.id;
+    console.log('User Id', userId);
     const user = await getMeService(userId);
     res.status(200).json(user);
   } catch (error) {

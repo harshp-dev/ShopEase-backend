@@ -3,12 +3,8 @@ import app from './src/app.js';
 import config from './src/constants/config.js';
 import connectDB from './src/configs/mongodb.config.js';
 
-// PORT from config constants
 const port = config.PORT;
 
-// Server start from here.
-var test = 'test';
-console.log(test);
 const startServer = async () => {
   try {
     await connectDB();

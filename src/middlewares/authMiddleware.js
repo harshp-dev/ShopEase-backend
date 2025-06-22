@@ -1,13 +1,15 @@
 import jwt from 'jsonwebtoken';
-import config from '../constants/config';
+import config from '../constants/config.js';
 export const authenticateUser = (req, res, next) => {
   try {
     const token = req.cookies?.accessToken;
     if (!token) {
       return res.status(401).json({ error: 'Unauthorized:No token provided' });
     }
+
     const decoded = jwt.verify(token, config.ACCESS_TOKEN_SECRET);
     req.user = { id: decoded.userId, role: decoded.role };
+    console.log('User Details', req.user);
     next();
   } catch (error) {
     const errmsg =
