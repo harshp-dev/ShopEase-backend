@@ -188,3 +188,38 @@ export const registerUser = async ({ username, email, password }) => {
     email: newUser.email,
   };
 };
+
+export const loginAdminUser = async (username, password) => {
+  if (!username || !password) {
+    const error = new Error('All fields are required');
+    error.statusCode = 400;
+    throw error;
+  }
+
+  const user = await User.findOne({
+    $or: [{ email: username }, { username: username }],
+  });
+
+  if (!user || user.role !== 'admin') {
+    const error = new Error('Admin user not found or unauthorized');
+    error.statusCode = 403;
+    throw error;
+  }
+
+  const isPasswordValid = await bcrypt.compare(password, user.password);
+  if (!isPasswordValid) {
+    const error = new Error('Invalid credentials');
+    error.statusCode = 401;
+    throw error;
+  }
+
+  const accessToken = generateAccessToken(user);
+  const refreshToken = generateRefreshToken(user);
+
+  await User.findByIdAndUpdate(user._id, { refreshToken });
+
+  return {
+    accessToken,
+    refreshToken,
+  };
+};
