@@ -7,6 +7,7 @@ import {
   refreshTokenService,
   loginUser,
   registerUser,
+  loginAdminUser,
 } from '../services/auth.service.js';
 
 export const login = async (req, res) => {
@@ -16,7 +17,7 @@ export const login = async (req, res) => {
 
     res.cookie('accessToken', accessToken, {
       sameSite: 'strict',
-      maxAge: 60 * 60 * 1000,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     res.cookie('refreshToken', refreshToken, {
@@ -109,7 +110,7 @@ export const refreshToken = async (req, res) => {
     const { accessToken } = await refreshTokenService(refreshToken);
     res.cookie('accessToken', accessToken, {
       sameSite: 'strict',
-      maxAge: 60 * 60 * 1000,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     res.status(200).json({ message: 'Access token generated' });
@@ -136,5 +137,30 @@ export const logout = async (req, res, next) => {
     res.status(200).json({ message: 'Logged out successfully' });
   } catch (error) {
     next(error);
+  }
+};
+
+export const adminLogin = async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    const { accessToken, refreshToken } = await loginAdminUser(username, password);
+
+    res.cookie('accessToken', accessToken, {
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    res.status(200).json({
+      message: 'Admin Login successful',
+    });
+  } catch (error) {
+    console.error('Login Controller Error:', error);
+    res.status(error.statusCode || 500).json({ message: error.message || 'Server Error' });
   }
 };
