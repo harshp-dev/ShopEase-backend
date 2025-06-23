@@ -34,6 +34,11 @@ export const loginSchema = Joi.object({
   username: Joi.string().trim().required(),
   password: Joi.string().trim().required(),
 });
+export const activationSchema = Joi.object({
+  token: Joi.string().required().messages({
+    'any.required': 'Activation token is required',
+  }),
+});
 
 export const forgotPasswordSchema = Joi.object({
   email: Joi.string().email().required().messages({
