@@ -1,5 +1,7 @@
 import { addCategoryService, deleteCategoryService } from '../services/category.service.js';
 
+
+// add category
 export const addCategory = async (req, res) => {
   try {
     const { name } = req.body;
@@ -20,6 +22,8 @@ export const addCategory = async (req, res) => {
   }
 };
 
+
+// delete category
 export const deleteCategory = async (req, res) => {
   try {
     const { id } = req.body;
