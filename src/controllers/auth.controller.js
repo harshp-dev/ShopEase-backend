@@ -5,8 +5,53 @@ import {
   getMeService,
   logoutService,
   refreshTokenService,
+  loginUser,
+  registerUser,
+  loginAdminUser,
 } from '../services/auth.service.js';
 
+export const login = async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    const { accessToken, refreshToken } = await loginUser(username, password);
+
+    res.cookie('accessToken', accessToken, {
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    res.status(200).json({
+      message: 'Login successful',
+    });
+  } catch (error) {
+    console.error('Login Controller Error:', error);
+    res.status(error.statusCode || 500).json({ message: error.message || 'Server Error' });
+  }
+};
+
+export const register = async (req, res) => {
+  try {
+    const { username, email, password } = req.body;
+
+    const user = await registerUser({ username, email, password });
+
+    res.status(201).json({
+      message: 'User registered successfully',
+      user,
+    });
+  } catch (error) {
+    console.error('Register Controller Error:', error);
+    res.status(error.statusCode || 500).json({
+      message: error.message || 'Server Error',
+    });
+  }
+};
 export const forgotPasswordController = async (req, res) => {
   try {
     const { email } = req.body;
@@ -62,8 +107,13 @@ export const refreshToken = async (req, res) => {
       return res.status(400).json({ message: 'Refresh token is required' });
     }
 
-    const { accessToken, newRefreshToken } = await refreshTokenService(refreshToken);
-    res.status(200).json({ accessToken, refreshToken: newRefreshToken });
+    const { accessToken } = await refreshTokenService(refreshToken);
+    res.cookie('accessToken', accessToken, {
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    res.status(200).json({ message: 'Access token generated' });
   } catch (error) {
     res.status(500).json({ message: error.message || 'Something went wrong' });
   }
@@ -72,6 +122,7 @@ export const refreshToken = async (req, res) => {
 export const getMe = async (req, res, next) => {
   try {
     const userId = req.user.id;
+    console.log('User Id', userId);
     const user = await getMeService(userId);
     res.status(200).json(user);
   } catch (error) {
@@ -86,5 +137,30 @@ export const logout = async (req, res, next) => {
     res.status(200).json({ message: 'Logged out successfully' });
   } catch (error) {
     next(error);
+  }
+};
+
+export const adminLogin = async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    const { accessToken, refreshToken } = await loginAdminUser(username, password);
+
+    res.cookie('accessToken', accessToken, {
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    res.status(200).json({
+      message: 'Admin Login successful',
+    });
+  } catch (error) {
+    console.error('Login Controller Error:', error);
+    res.status(error.statusCode || 500).json({ message: error.message || 'Server Error' });
   }
 };
