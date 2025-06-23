@@ -39,11 +39,10 @@ export const register = async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
-    const user = await registerUser({ username, email, password });
+    await registerUser({ username, email, password });
 
     res.status(201).json({
       message: 'User registered successfully',
-      user,
     });
   } catch (error) {
     console.error('Register Controller Error:', error);
@@ -52,6 +51,7 @@ export const register = async (req, res) => {
     });
   }
 };
+
 export const forgotPasswordController = async (req, res) => {
   try {
     const { email } = req.body;

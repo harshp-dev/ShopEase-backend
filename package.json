@@ -10,7 +10,8 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "lint:fix": "eslint . --fix",
-    "prepare": "husky"
+    "prepare": "husky",
+    "seed": "node --env-file=.env src/scripts/seedAdmin.js"
   },
   "repository": {
     "type": "git",
