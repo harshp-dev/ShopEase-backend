@@ -1,6 +1,5 @@
 import { addCategoryService, deleteCategoryService } from '../services/category.service.js';
 
-
 // add category
 export const addCategory = async (req, res) => {
   try {
@@ -21,7 +20,6 @@ export const addCategory = async (req, res) => {
     res.status(error.statusCode || 500).json({ message: error.message || 'Server error' });
   }
 };
-
 
 // delete category
 export const deleteCategory = async (req, res) => {
