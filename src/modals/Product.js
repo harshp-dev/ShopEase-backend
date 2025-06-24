@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import './Category.js';
 
 const productSchema = new mongoose.Schema(
   {
@@ -16,7 +17,8 @@ const productSchema = new mongoose.Schema(
     },
     images: [
       {
-        type: String,
+        url: { type: String },
+        publicId: { type: String },
       },
     ],
     category: {
@@ -27,10 +29,6 @@ const productSchema = new mongoose.Schema(
     stock: {
       type: Number,
       default: 0,
-    },
-    isActive: {
-      type: Boolean,
-      default: true,
     },
   },
   {
