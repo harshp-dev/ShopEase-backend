@@ -4,12 +4,14 @@ import mongoose from 'mongoose';
 import config from '../constants/config.js';
 import User from '../modals/User.js';
 import sendEmail from '../helpers/sendMail.js';
+import { isAdmin } from '../utils/roleUtils.js';
+
 export const forgotPasswordService = async email => {
   const user = await User.findOne({ email });
-  if (!user) return;
-  if (user.role === 'admin') {
-    throw new Error('Email not found.');
-  }
+
+  if (!user) throw new Error('User not found.');
+
+  if (isAdmin(user)) throw new Error('Email not found.');
 
   const token = jwt.sign({ userId: user._id }, config.ACCESS_TOKEN_SECRET, {
     expiresIn: config.ACCESS_TOKEN_EXPIRES_IN,
@@ -21,12 +23,12 @@ export const forgotPasswordService = async email => {
     to: email,
     subject: 'Reset your ShopEase Password',
     html: `
-      <h2>Password Reset Request</h2>
-      <p>Click the link below to reset your password (valid for 15 minutes):</p>
-      <a href="${url}" style="background-color: blue; color: white; padding: 10px 20px; border: none; border-radius: 5px; text-decoration: none; cursor: pointer; display: inline-block;">
-        Reset Password
-      </a>
-    `,
+        <h2>Password Reset Request</h2>
+        <p>Click the link below to reset your password (valid for 15 minutes):</p>
+        <a href="${url}" style="background-color: blue; color: white; padding: 10px 20px; border: none; border-radius: 5px; text-decoration: none; cursor: pointer; display: inline-block;">
+          Reset Password
+        </a>
+      `,
   });
 };
 
@@ -130,9 +132,7 @@ export const loginUser = async (username, password) => {
     throw error;
   }
 
-  const user = await User.findOne({
-    $or: [{ email: username }, { username: username }],
-  });
+  const user = await User.findOne({ username: username });
 
   if (!user) {
     const error = new Error('User not found');
@@ -196,11 +196,9 @@ export const loginAdminUser = async (username, password) => {
     throw error;
   }
 
-  const user = await User.findOne({
-    $or: [{ email: username }, { username: username }],
-  });
+  const user = await User.findOne({ username: username });
 
-  if (!user || user.role !== 'admin') {
+  if (!user || !isAdmin(user)) {
     const error = new Error('Admin user not found or unauthorized');
     error.statusCode = 403;
     throw error;

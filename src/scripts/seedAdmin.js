@@ -1,18 +1,15 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import User from '../modals/User.js';
-import dotenv from 'dotenv';
-
-dotenv.config();
-
-const MONGODB_URI = process.env.MONGO_URL;
+import config from '../constants/config.js';
+import { roles } from '../constants/roles.js';
 
 const seedAdmin = async () => {
   try {
-    await mongoose.connect(MONGODB_URI);
+    await mongoose.connect(config.MONGO_URL);
     console.log('Connected to DB');
 
-    const existingAdmin = await User.findOne({ role: 'admin' });
+    const existingAdmin = await User.findOne({ role: roles.ADMIN });
 
     if (existingAdmin) {
       console.log('Admin already exists');
@@ -25,7 +22,7 @@ const seedAdmin = async () => {
       username: 'jbl', // your admin user's username
       email: 'limbanijeet@gmail.com', // your admin user email
       password: hashedPassword, // your admin user password
-      role: 'admin',
+      role: roles.ADMIN,
     });
 
     await admin.save();
