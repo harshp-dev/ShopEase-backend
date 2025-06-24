@@ -1,5 +1,5 @@
 import express from 'express';
-import upload from '../middlewares/multer.js';
+import { roles } from '../constants/roles.js';
 import {
   addCategory,
   deleteCategory,
@@ -7,8 +7,8 @@ import {
   getCategoryById,
   updateCategory,
 } from '../controllers/category.controller.js';
-import { roles } from '../constants/roles.js';
 import { authenticateUser, authorizerole } from '../middlewares/authMiddleware.js';
+import upload from '../middlewares/multer.js';
 import { validate } from '../middlewares/validator.js';
 import { updateCategorySchema } from '../Validate/validationSchema.js';
 
@@ -31,5 +31,7 @@ router.put(
   updateCategory,
 );
 router.delete('/delete/:id', authenticateUser, authorizerole(roles.ADMIN), deleteCategory);
+router.post('/add', upload.single('image'), addCategory);
+router.delete('/delete', deleteCategory);
 
 export default router;
