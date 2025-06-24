@@ -75,6 +75,19 @@ export const changePasswordSchema = Joi.object({
     }),
 });
 
+export const updateCategorySchema = Joi.object({
+  name: Joi.string().trim().min(1).optional().messages({
+    'string.empty': 'Category name cannot be empty',
+  }),
+  image: Joi.string().uri().optional().allow('').messages({
+    'string.uri': 'Image must be a valid URL',
+  }),
+})
+  .or('name', 'image')
+  .messages({
+    'object.missing': 'At least one of name or image must be provided',
+  });
+
 export const productSchema = Joi.object({
   name: Joi.string().trim().required(),
   description: Joi.string().allow(''),

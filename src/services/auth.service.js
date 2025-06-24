@@ -197,6 +197,7 @@ export const loginAdminUser = async (username, password) => {
   }
 
   const user = await User.findOne({ username: username });
+
   if (!user || !isAdmin(user)) {
     const error = new Error('Admin user not found or unauthorized');
     error.statusCode = 403;
