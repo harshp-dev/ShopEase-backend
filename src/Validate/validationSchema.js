@@ -74,3 +74,11 @@ export const changePasswordSchema = Joi.object({
       'any.required': 'New password is required',
     }),
 });
+
+export const productSchema = Joi.object({
+  name: Joi.string().trim().required(),
+  description: Joi.string().allow(''),
+  price: Joi.number().positive().required(),
+  category: Joi.string().required(),
+  stock: Joi.number().integer().min(0).default(0),
+});
