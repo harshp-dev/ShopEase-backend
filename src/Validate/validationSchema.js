@@ -61,3 +61,29 @@ export const resetPasswordSchema = Joi.object({
       'any.required': 'Password is required',
     }),
 });
+
+export const changePasswordSchema = Joi.object({
+  oldPassword: Joi.string().required().messages({
+    'any.required': 'Current password is required',
+  }),
+  newPassword: Joi.string()
+    .min(6)
+    .pattern(/[a-z]/, 'lowercase')
+    .pattern(/[A-Z]/, 'uppercase')
+    .pattern(/\d/, 'number')
+    .pattern(/[\W_]/, 'special')
+    .required()
+    .messages({
+      'string.min': 'Password must be at least 6 characters',
+      'string.pattern.name': 'Password must include {#name} character',
+      'any.required': 'New password is required',
+    }),
+});
+
+export const productSchema = Joi.object({
+  name: Joi.string().trim().required(),
+  description: Joi.string().allow(''),
+  price: Joi.number().positive().required(),
+  category: Joi.string().required(),
+  stock: Joi.number().integer().min(0).default(0),
+});
