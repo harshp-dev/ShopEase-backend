@@ -31,7 +31,5 @@ router.put(
   updateCategory,
 );
 router.delete('/delete/:id', authenticateUser, authorizerole(roles.ADMIN), deleteCategory);
-router.post('/add', upload.single('image'), addCategory);
-router.delete('/delete', deleteCategory);
 
 export default router;
