@@ -4,10 +4,18 @@ import upload from '../middlewares/multer.js';
 import { validate } from '../middlewares/validator.js';
 import { productSchema } from '../Validate/validationSchema.js';
 import { roles } from '../constants/roles.js';
-import { authorizerole } from '../middlewares/authMiddleware.js';
+import { deleteProductbyId, fetchProducts } from '../controllers/product.controller.js';
+import { authenticateUser, authorizerole } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
+router.get('/', authenticateUser, fetchProducts);
+router.delete(
+  '/products/:productId',
+  authenticateUser,
+  authorizerole(roles.ADMIN),
+  deleteProductbyId,
+);
 router.get('/:id', getProductById);
 router.post(
   '/',
