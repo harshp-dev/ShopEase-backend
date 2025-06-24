@@ -48,3 +48,11 @@ export const updateProductService = async (id, data, files = []) => {
 
   return product;
 };
+
+export const getProductByIdService = async id => {
+  const product = await Product.findById(id).populate('category');
+  if (!product) {
+    throw new Error('Product not found');
+  }
+  return product;
+};

@@ -1,4 +1,8 @@
-import { createProductService, updateProductService } from '../services/product.service.js';
+import {
+  createProductService,
+  getProductByIdService,
+  updateProductService,
+} from '../services/product.service.js';
 
 export const createProduct = async (req, res) => {
   try {
@@ -21,6 +25,19 @@ export const updateProduct = async (req, res) => {
     const files = req.files;
     const product = await updateProductService(productId, data, files);
     res.status(200).json({ message: 'Product updated', product });
+  } catch (error) {
+    console.log(error);
+    res.status(error.statusCode || 500).json({
+      message: error.message || 'Server Error',
+    });
+  }
+};
+
+export const getProductById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const product = await getProductByIdService(id);
+    res.status(200).json({ product });
   } catch (error) {
     console.log(error);
     res.status(error.statusCode || 500).json({
