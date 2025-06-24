@@ -9,7 +9,7 @@ import { authenticateUser, authorizerole } from '../middlewares/authMiddleware.j
 
 const router = express.Router();
 
-router.get('/', fetchProducts);
+router.get('/', authenticateUser, fetchProducts);
 router.delete(
   '/products/:productId',
   authenticateUser,
@@ -20,7 +20,7 @@ router.get('/:id', getProductById);
 router.post(
   '/',
   upload.array('images'),
-  //   authorizerole(roles.ADMIN),
+  authorizerole(roles.ADMIN),
   validate(productSchema),
   createProduct,
 );
