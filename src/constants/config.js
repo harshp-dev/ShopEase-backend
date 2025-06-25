@@ -1,5 +1,6 @@
+import dotenv from 'dotenv';
 import rateLimit from 'express-rate-limit';
-
+dotenv.config();
 const config = {
   PORT: process.env.PORT || 5000,
   MONGO_URL: process.env.MONGO_URL,
