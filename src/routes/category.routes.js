@@ -24,14 +24,12 @@ router.post(
 );
 router.put(
   '/:id',
+  upload.single('image'),
   authenticateUser,
   authorizerole(roles.ADMIN),
-  upload.single('image'),
   validate(updateCategorySchema),
   updateCategory,
 );
 router.delete('/delete/:id', authenticateUser, authorizerole(roles.ADMIN), deleteCategory);
-router.post('/add', upload.single('image'), addCategory);
-router.delete('/delete', deleteCategory);
 
 export default router;
