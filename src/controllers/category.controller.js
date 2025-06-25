@@ -6,7 +6,6 @@ import {
   updateCategoryService,
 } from '../services/category.service.js';
 
-// add category
 export const addCategory = async (req, res) => {
   try {
     const { name } = req.body;

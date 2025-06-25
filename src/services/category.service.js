@@ -138,13 +138,14 @@ export const updateCategoryService = async (id, { name, file }) => {
     category.name = name || category.name;
     const path = new URL(category.image).pathname;
     const publicId = path.split('/').slice(4).join('/').replace('.jpg', '');
-    await deleteImage(publicId);
-    const imageResult = await uploadImage(file.buffer, {
-      folder: 'categories',
-      resource_type: 'image',
-    });
-
-    category.image = imageResult.secure_url;
+    if (file) {
+      await deleteImage(publicId);
+      const imageResult = await uploadImage(file.buffer, {
+        folder: 'categories',
+        resource_type: 'image',
+      });
+      category.image = imageResult.secure_url;
+    }
 
     const updatedCategory = await category.save();
 
