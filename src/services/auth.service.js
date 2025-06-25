@@ -134,7 +134,7 @@ export const loginUser = async (username, password) => {
 
   const user = await User.findOne({ username: username });
 
-  if (!user) {
+  if (!user || isAdmin(user)) {
     const error = new Error('User not found');
     error.statusCode = 401;
     throw error;
