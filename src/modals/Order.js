@@ -6,7 +6,8 @@ const orderSchema = new mongoose.Schema(
       ref: 'User',
       required: true,
     },
-    cart: {  // Optional: link to original cart (not commonly needed)
+    cart: {
+      // Optional: link to original cart (not commonly needed)
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Cart',
     },
@@ -52,7 +53,7 @@ const orderSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 const Order = mongoose.model('Order', orderSchema);
