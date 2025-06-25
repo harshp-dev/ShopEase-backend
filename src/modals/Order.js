@@ -6,27 +6,15 @@ const orderSchema = new mongoose.Schema(
       ref: 'User',
       required: true,
     },
+    cart: {  // Optional: link to original cart (not commonly needed)
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Cart',
+    },
     address: {
-      street: {
-        type: String,
-        required: true,
-        trim: true,
-      },
-      city: {
-        type: String,
-        required: true,
-        trim: true,
-      },
-      state: {
-        type: String,
-        required: true,
-        trim: true,
-      },
-      zip: {
-        type: String,
-        required: true,
-        trim: true,
-      },
+      street: { type: String, required: true, trim: true },
+      city: { type: String, required: true, trim: true },
+      state: { type: String, required: true, trim: true },
+      zip: { type: String, required: true, trim: true },
     },
     mobileNumber: {
       type: String,
@@ -56,15 +44,16 @@ const orderSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    paymentId:{
-        type:String,
-        required: true,
-        unique:true
+    paymentId: {
+      type: String,
+      required: true,
+      unique: true,
     },
   },
   {
     timestamps: true,
-  },
+  }
 );
+
 const Order = mongoose.model('Order', orderSchema);
 export default Order;

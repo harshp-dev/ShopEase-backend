@@ -24,9 +24,9 @@ router.post(
 );
 router.put(
   '/:id',
+  upload.single('image'),
   authenticateUser,
   authorizerole(roles.ADMIN),
-  upload.single('image'),
   validate(updateCategorySchema),
   updateCategory,
 );

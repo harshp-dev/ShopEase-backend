@@ -67,8 +67,9 @@ export const getCategoryById = async (req, res) => {
 export const updateCategory = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, image } = req.body;
-    const updatedCategory = await updateCategoryService(id, { name, image });
+    const { name } = req.body;
+    const file = req.file;
+    const updatedCategory = await updateCategoryService(id, { name, file });
     res.status(200).json({
       message: 'Category updated successfully',
       category: updatedCategory,
