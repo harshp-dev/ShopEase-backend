@@ -1,6 +1,6 @@
 export const validate = schema => (req, res, next) => {
+  console.log(req.body);
   const { error, value } = schema.validate(req.body, { abortEarly: false });
-
   if (error) {
     return res.status(400).json({
       message: error.details[0].message,

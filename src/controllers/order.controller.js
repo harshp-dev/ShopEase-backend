@@ -1,5 +1,8 @@
-import { createOrderService,getAllUserOrdersService,getUserOrdersService  }
- from '../services/order.service.js';
+import {
+  createOrderService,
+  getAllUserOrdersService,
+  getUserOrdersService,
+} from '../services/order.service.js';
 
 export const addOrder = async (req, res) => {
   try {
@@ -55,12 +58,12 @@ export const getUserOrders = async (req, res) => {
     const userId = req.user?.id;
     const role = req.user?.role;
 
- if (role === 'ADMIN') {
-  return res.status(403).json({
-    success: false,
-    message: 'Forbidden: Only users can view their own orders',
-  });
-}
+    if (role === 'ADMIN') {
+      return res.status(403).json({
+        success: false,
+        message: 'Forbidden: Only users can view their own orders',
+      });
+    }
     const { page = 1, limit = 10 } = req.query;
 
     const result = await getUserOrdersService({ userId, page, limit });
