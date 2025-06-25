@@ -80,6 +80,12 @@ export const changePasswordSchema = Joi.object({
     }),
 });
 
+export const updateCategorySchema = Joi.object({
+  name: Joi.string().trim().min(1).optional().messages({
+    'string.empty': 'Category name cannot be empty',
+  }),
+});
+
 export const productSchema = Joi.object({
   name: Joi.string().trim().required(),
   description: Joi.string().allow(''),
