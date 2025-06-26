@@ -53,7 +53,7 @@ export const fetchProducts = async (req, res) => {
 
     const data = await getProducts({
       category,
-      search,
+      searchQuery: search,
       page: parseInt(page),
       limit: parseInt(limit),
     });
