@@ -108,19 +108,13 @@ export const deleteProductById = async productId => {
     error.statusCode = 404;
     throw error;
   }
-
-  // Step 1: Delete product document
   await Product.findByIdAndDelete(productId);
-
-  // Step 2: Remove this product from all cart items
   const carts = await Cart.find({ 'items.product': productId });
-
   for (const cart of carts) {
     cart.items = cart.items.filter(item => item.product.toString() !== productId);
     cart.totalPrice = cart.items.reduce((total, item) => total + item.price * item.quantity, 0);
     await cart.save();
   }
-
   return {
     message: 'The product and its references in carts were deleted successfully',
   };
