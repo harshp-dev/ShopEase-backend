@@ -87,4 +87,22 @@ export const productSchema = Joi.object({
   price: Joi.number().positive().required(),
   category: Joi.string().required(),
   stock: Joi.number().integer().min(0).default(0),
+  images: Joi.array()
+    .items(
+      Joi.any().custom((value, helpers) => {
+        if (!(value instanceof File)) {
+          return helpers.error('file.invalid');
+        }
+        if (!value.type.startsWith('image/')) {
+          return helpers.error('file.type');
+        }
+        return value;
+      }, 'File Validation'),
+    )
+    .optional()
+    .messages({
+      'array.base': 'Images must be an array of files',
+      'file.invalid': 'Invalid file object',
+      'file.type': 'Only image files are allowed',
+    }),
 });
