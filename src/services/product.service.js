@@ -1,6 +1,7 @@
 import { uploadImage, deleteImage } from '../helpers/cloudinary.js';
 import Category from '../modals/Category.js';
 import Product from '../modals/Product.js';
+import Cart from '../modals/Cart.js';
 
 export const createProductService = async (data, files = []) => {
   const uploadedImages = [];
@@ -100,15 +101,21 @@ export const getProducts = async ({ category, searchQuery, page = 1, limit = 10 
   };
 };
 
-export const deleteProductById = async productid => {
-  const product = await Product.findById(productid);
+export const deleteProductById = async productId => {
+  const product = await Product.findById(productId);
   if (!product) {
-    const error = new Error('Sorry the Product is not found');
+    const error = new Error('Sorry, the product is not found');
     error.statusCode = 404;
     throw error;
   }
-  await Product.findByIdAndDelete(productid);
+  await Product.findByIdAndDelete(productId);
+  const carts = await Cart.find({ 'items.product': productId });
+  for (const cart of carts) {
+    cart.items = cart.items.filter(item => item.product.toString() !== productId);
+    cart.totalPrice = cart.items.reduce((total, item) => total + item.price * item.quantity, 0);
+    await cart.save();
+  }
   return {
-    message: 'The Product deleted successfully',
+    message: 'The product and its references in carts were deleted successfully',
   };
 };
