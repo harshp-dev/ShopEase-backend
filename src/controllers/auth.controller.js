@@ -130,13 +130,12 @@ export const getMe = async (req, res, next) => {
   }
 };
 
-export const logout = async (req, res, next) => {
+export const logout = async (req, res) => {
   try {
-    const userId = req.user.id;
-    await logoutService(userId, res);
-    res.status(200).json({ message: 'Logged out successfully' });
+    const result = await logoutService(req, res);
+    res.status(200).json(result);
   } catch (error) {
-    next(error);
+    res.status(500).json({ message: error.message || 'Something went  with logout' });
   }
 };
 

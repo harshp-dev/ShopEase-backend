@@ -28,6 +28,6 @@ router.post('/refresh-token', refreshToken);
 router.get('/me', authenticateUser, getMe);
 router.post('/login', validate(loginSchema), login);
 router.post('/register', validate(registrationSchema), register);
-router.post('/logout', authenticateUser, logout);
+router.post('/logout', logout);
 router.post('/admin-login', adminLogin);
 export default router;
