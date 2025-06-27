@@ -34,11 +34,6 @@ export const loginSchema = Joi.object({
   username: Joi.string().trim().required(),
   password: Joi.string().trim().required(),
 });
-export const activationSchema = Joi.object({
-  token: Joi.string().required().messages({
-    'any.required': 'Activation token is required',
-  }),
-});
 
 export const forgotPasswordSchema = Joi.object({
   email: Joi.string().email().required().messages({
@@ -84,14 +79,7 @@ export const updateCategorySchema = Joi.object({
   name: Joi.string().trim().min(1).optional().messages({
     'string.empty': 'Category name cannot be empty',
   }),
-  image: Joi.string().uri().optional().allow('').messages({
-    'string.uri': 'Image must be a valid URL',
-  }),
-})
-  .or('name', 'image')
-  .messages({
-    'object.missing': 'At least one of name or image must be provided',
-  });
+});
 
 export const productSchema = Joi.object({
   name: Joi.string().trim().required(),
@@ -99,4 +87,22 @@ export const productSchema = Joi.object({
   price: Joi.number().positive().required(),
   category: Joi.string().required(),
   stock: Joi.number().integer().min(0).default(0),
+  images: Joi.array()
+    .items(
+      Joi.any().custom((value, helpers) => {
+        if (!(value instanceof File)) {
+          return helpers.error('file.invalid');
+        }
+        if (!value.type.startsWith('image/')) {
+          return helpers.error('file.type');
+        }
+        return value;
+      }, 'File Validation'),
+    )
+    .optional()
+    .messages({
+      'array.base': 'Images must be an array of files',
+      'file.invalid': 'Invalid file object',
+      'file.type': 'Only image files are allowed',
+    }),
 });

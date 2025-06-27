@@ -1,6 +1,6 @@
-import Category from '../modals/Category.js';
 import mongoose from 'mongoose';
-import { uploadImage, deleteImage } from '../helpers/cloudinary.js';
+import { deleteImage, uploadImage } from '../helpers/cloudinary.js';
+import Category from '../modals/Category.js';
 
 export const addCategoryService = async ({ name, fileBuffer }) => {
   if (!name) {
@@ -121,7 +121,7 @@ export const getCategoryByIdService = async id => {
   }
 };
 
-export const updateCategoryService = async (id, { name, image }) => {
+export const updateCategoryService = async (id, { name, file }) => {
   try {
     if (!id.match(/^[0-9a-fA-F]{24}$/)) {
       const error = new Error('Invalid category ID');
@@ -136,7 +136,16 @@ export const updateCategoryService = async (id, { name, image }) => {
       throw error;
     }
     category.name = name || category.name;
-    category.image = image || category.image;
+    const path = new URL(category.image).pathname;
+    const publicId = path.split('/').slice(4).join('/').replace('.jpg', '');
+    if (file) {
+      await deleteImage(publicId);
+      const imageResult = await uploadImage(file.buffer, {
+        folder: 'categories',
+        resource_type: 'image',
+      });
+      category.image = imageResult.secure_url;
+    }
 
     const updatedCategory = await category.save();
 
