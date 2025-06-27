@@ -3,6 +3,7 @@ import {
   updateCartItemService,
   removeCartItemService,
   addToCartService,
+  clearCartService,
 } from '../services/cart.service.js';
 
 export const getCart = async (req, res) => {
@@ -79,6 +80,19 @@ export const deleteCart = async (req, res) => {
     if (error.message === 'Cart not found') {
       return res.status(404).json({ error: error.message });
     }
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const clearCart = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const cart = await clearCartService(userId);
+    res.status(200).json({
+      message: 'Cart cleared successfully',
+      cart,
+    });
+  } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };

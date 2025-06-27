@@ -1,6 +1,6 @@
-import Category from '../modals/Category.js';
 import mongoose from 'mongoose';
-import { uploadImage, deleteImage } from '../helpers/cloudinary.js';
+import { deleteImage, uploadImage } from '../helpers/cloudinary.js';
+import Category from '../modals/Category.js';
 
 export const addCategoryService = async ({ name, fileBuffer }) => {
   if (!name) {
