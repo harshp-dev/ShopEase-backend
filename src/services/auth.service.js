@@ -91,13 +91,81 @@ export const refreshTokenService = async refreshToken => {
   }
 };
 
-export const logoutService = async (userId, res) => {
-  if (!mongoose.Types.ObjectId.isValid(userId)) {
-    throw new Error('Invalid user ID');
+export const logoutService = async (req, res) => {
+  try {
+    const { accessToken, refreshToken } = req.cookies;
+
+    // Edge Case 1: No tokens at all
+    if (!accessToken && !refreshToken) {
+      // Clear any potential cookies and consider it a successful logout
+      clearAuthCookies(res);
+      return { message: 'Already logged out' };
+    }
+
+    let userId = null;
+
+    // Try to get userId from access token first (if valid)
+    if (accessToken) {
+      try {
+        const decoded = jwt.verify(accessToken, config.ACCESS_TOKEN_SECRET);
+        userId = decoded.userId;
+      } catch (error) {
+        // Access token is invalid/expired, we'll try refresh token
+        console.log('Access token invalid during logout:', error.message);
+      }
+    }
+
+    // If we couldn't get userId from access token, try refresh token
+    if (!userId && refreshToken) {
+      try {
+        const decoded = jwt.verify(refreshToken, config.REFRESH_TOKEN_SECRET);
+        userId = decoded.userId;
+      } catch (error) {
+        // Both tokens are invalid - clear cookies and logout anyway
+        console.log('Refresh token also invalid during logout:', error.message);
+        clearAuthCookies(res);
+        return { message: 'Logged out (tokens were invalid)' };
+      }
+    }
+
+    // Edge Case 2: We have userId, now clean up database
+    if (userId) {
+      try {
+        // Remove refresh token from database
+        await User.findByIdAndUpdate(userId, { $unset: { refreshToken: 1 } }, { new: true });
+        console.log(`Refresh token removed for user: ${userId}`);
+      } catch (dbError) {
+        // Even if DB update fails, we should clear cookies
+        console.error('Failed to update user in database during logout:', dbError);
+        // Don't throw error here - we still want to clear cookies
+      }
+    }
+
+    // Always clear cookies regardless of token validity
+    clearAuthCookies(res);
+
+    return { message: 'Logged out successfully' };
+  } catch (error) {
+    // Edge Case 3: Unexpected errors - still try to clear cookies
+    console.error('Unexpected error during logout:', error);
+    clearAuthCookies(res);
+    throw new Error('Logout completed with errors');
   }
-  res.clearCookie('accessToken');
-  res.clearCookie('refreshToken');
-  return true;
+};
+
+// Helper function to clear authentication cookies
+const clearAuthCookies = res => {
+  res.clearCookie('accessToken', {
+    sameSite: 'strict',
+    secure: process.env.NODE_ENV === 'production', // Only secure in production
+    httpOnly: false, // Access token cookie is not httpOnly in your current setup
+  });
+
+  res.clearCookie('refreshToken', {
+    sameSite: 'strict',
+    secure: process.env.NODE_ENV === 'production',
+    httpOnly: true,
+  });
 };
 
 export const getMeService = async userId => {
