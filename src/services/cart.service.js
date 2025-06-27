@@ -90,3 +90,15 @@ export const removeCartItemService = async (userId, productId) => {
   await cart.save();
   return cart.populate('items.product');
 };
+
+export const clearCartService = async userId => {
+  const cart = await Cart.findOne({ user: userId });
+  if (!cart) {
+    throw new Error('Cart not found');
+  }
+
+  cart.items = [];
+  cart.totalPrice = 0;
+  await cart.save();
+  return cart.populate('items.product');
+};
